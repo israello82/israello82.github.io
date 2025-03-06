@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><h1>
+    <span style="color: #00FFF0">Mid-IR / Near-IR</span><br>
+    Análisis de Hidrocarburos
+</h1>
+<p class="subtitle">Espectroscopía avanzada para control de calidad en combustibles</p>
+
+</title>
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+        }
+
+        /* Paleta de colores */
+        :root {
+            --primary-dark: #0A192F;
+            --primary-cyan: #00FFF0;
+            --accent-red: #FF4A57;
+            --light-gray: #CCD6F6;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            background: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary-cyan);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-cyan);
+            mask: url('https://assets.codepen.io/4515922/flask-icon.svg') no-repeat center;
+        }
+
+        .logo-text {
+            color: var(--light-gray);
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-link {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--primary-cyan);
+            bottom: -5px;
+            left: 0;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: var(--accent-red);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 74, 87, 0.4);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--primary-dark);
+            min-width: 200px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--light-gray);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--primary-cyan);
+            color: var(--primary-dark);
+        }
+
+        /* Sección Hero */
+        .hero {
+            height: calc(100vh - 80px);
+            background: linear-gradient(45deg, rgba(10, 25, 47, 0.9), rgba(10, 25, 47, 0.7)),
+                        url('https://images.unsplash.com/photo-1575505586569-646b2ca898fc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            margin-top: 80px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-title span {
+            color: var(--primary-cyan);
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        /* Secciones generales */
+        .section {
+            display: none;
+            min-height: 100vh;
+            padding: 100px 5%;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Formularios y Curvas */
+        .form-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            max-width: 1000px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .curva-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+
+        #curvaGasolina, #curvaDiesel {
+            height: 400px;
+            width: 100%;
+        }
+
+        /* Historial */
+        .historial-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .historial-item {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .historial-item button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary-cyan);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--primary-dark);
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <div class="logo-text">S  T  N  LABORATORIO</div>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="#inicio" class="nav-link" onclick="showSection('inicio')">Inicio</a>
+            <div class="dropdown">
+                <a href="#analisis" class="nav-link" onclick="showSection('analisis')">Análisis ▼</a>
+                <div class="dropdown-content">
+                    <a href="#diesel" onclick="showSection('diesel')">Diesel</a>
+                    <a href="#gasolina" onclick="showSection('gasolina')">Gasolina</a>
+                </div>
+            </div>
+            <a href="#historial" class="nav-link" onclick="showSection('historial')">Historial</a>
+            <a href="#contacto" class="nav-link" onclick="showSection('contacto')"><!-- Sección Contacto -->
+<section id="contacto" class="section">
+    <div class="form-container">
+        <h2>Contáctenos</h2>
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h3>Información de Contacto</h3>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="var(--primary-cyan)">
+                            <path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/>
+                        </svg>
+                    </div>
+                    <p>Carretera Libre
+Monterrey – Reynosa 2007,
+Colonia San Antonio,
+Juárez, Nuevo León.
+México, CP 67250.</p>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="var(--primary-cyan)">
+                            <path d="M20 22.621l-3.521-6.795c-.008.004-1.974.97-2.064 1.011-2.24 1.086-6.799-7.82-4.609-8.994l2.083-1.026-3.493-6.817-2.106 1.039c-7.202 3.755 4.233 25.982 11.6 22.615.121-.055 2.102-1.029 2.11-1.033z"/>
+                        </svg>
+                    </div>
+                    <p>+54 11 1234-5678</p>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="var(--primary-cyan)">
+                            <path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-9.458l4.623 3.746zm-4.141-5.929h19.035l-9.517 7.713-9.518-7.713zm5.694 7.188l3.824 3.099 3.83-3.104 5.612 6.817h-18.779l5.513-6.812zm9.208-1.264l4.616-3.741v9.348l-4.616-5.607z"/>
+                        </svg>
+                    </div>
+                    <p>contacto@stnlabs.com</p>
+                </div>
+            </div>
+
+            <form class="contact-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre Completo</label>
+                        <input type="text" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        
+                <button type="submit" class="cta-button"></button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Estilos para la sección de contacto */
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 3rem;
+        margin-top: 2rem;
+    }
+
+    .contact-info {
+        background: var(--primary-dark);
+        padding: 2rem;
+        border-radius: 10px;
+        color: var(--light-gray);
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .contact-form .full-width {
+        grid-column: 1 / -1;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        resize: vertical;
+    }
+
+    @media (max-width: 768px) {
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .contact-info {
+            margin-bottom: 2rem;
+        }
+    }
+</style>Contacto</a>
+        </nav>
+        
+        <a href="#registro" class="cta-button" onclick="showSection('analisis')">Nuevo Análisis</a>
+    </header>
+
+    <!-- Sección Hero (Inicio) -->
+    <section id="inicio" class="section active">
+        <div class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span>Análisis Preciso</span><br>
+                    De Hidrocarburos
+                </h1>
+                <p class="hero-description">
+                    Sistema especializado en registro y análisis de muestras de gasolina y diésel. 
+                    Generación automática de curvas de destilación según estándares ASTM,Mid-IR y Near-IR,Espectrofotometro
+                </p>
+                <a href="#analisis" class="cta-button" onclick="showSection('analisis')">Iniciar Análisis</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Análisis -->
+    <section id="analisis" class="section">
+        <h2>Seleccione Tipo de Análisis</h2>
+        <div class="analysis-options">
+            <button class="cta-button" onclick="showSection('gasolina')">Analizar Gasolina</button>
+            <button class="cta-button" onclick="showSection('diesel')">Analizar Diesel</button>
+        </div>
+    </section>
+
+    <!-- Sección Gasolina -->
+    <section id="gasolina" class="section">
+        <div class="form-container">
+            <h2>Análisis de Gasolina</h2>
+            <button class="cta-button" onclick="showSection('analisis')">← Regresar</button>
+            
+            <form id="formGasolina">
+                <div class="form-grid">
+                    <!-- Campos específicos para Gasolina -->
+                    <div class="form-group">
+                        <label>Tracktor:</label>
+                        <input type="text" id="gasTracktor" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha:</label>
+                        <input type="date" id="gasFecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Octano (RON):</label>
+                        <input type="number" step="0.1" id="gasOctano" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Benceno (%):</label>
+                        <input type="number" step="0.01" id="gasBenceno" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tolueno (%):</label>
+                        <input type="number" step="0.01" id="gasTolueno" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Etanol (%):</label>
+                        <input type="number" step="0.01" id="gasEtanol" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Metanol (%):</label>
+                        <input type="number" step="0.01" id="gasMetanol" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Olefinas (%):</label>
+                        <input type="number" step="0.01" id="gasOlefinas" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Aromáticos (%):</label>
+                        <input type="number" step="0.01" id="gasAromaticos" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Saturados (%):</label>
+                        <input type="number" step="0.01" id="gasSaturados" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T. Inicial Ebull. (°C):</label>
+                        <input type="number" id="gasTInicial" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T10% (°C):</label>
+                        <input type="number" id="gasT10" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T50% (°C):</label>
+                        <input type="number" id="gasT50" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T90% (°C):</label>
+                        <input type="number" id="gasT90" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T. Final Ebull. (°C):</label>
+                        <input type="number" id="gasTFinal" required>
+                    </div>
+                </div>
+                <button type="button" onclick="guardarAnalisis('gasolina')" class="cta-button">
+                    Generar Curva y Guardar
+                </button>
+            </form>
+        </div>
+        <div class="curva-container" id="curvaGasolina"></div>
+    </section>
+
+    <!-- Sección Diesel -->
+    <section id="diesel" class="section">
+        <div class="form-container">
+            <h2>Análisis Diesel</h2>
+            <button class="cta-button" onclick="showSection('analisis')">← Regresar</button>
+            
+            <form id="formDiesel">
+                <div class="form-grid">
+                    <!-- Campos específicos para Diesel -->
+                    <div class="form-group">
+                        <label>Tracktor:</label>
+                        <input type="text" id="dieTracktor" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha:</label>
+                        <input type="date" id="dieFecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cetano:</label>
+                        <input type="number" step="0.1" id="dieCetano" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Aromáticos (%):</label>
+                        <input type="number" step="0.01" id="dieAromaticos" required>
+                    </div>
+                    <div class="form-group">
+                        <label>PNA (%):</label>
+                        <input type="number" step="0.01" id="diePNA" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T. Inicial Ebull. (°C):</label>
+                        <input type="number" id="dieTInicial" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T10% (°C):</label>
+                        <input type="number" id="dieT10" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T50% (°C):</label>
+                        <input type="number" id="dieT50" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T90% (°C):</label>
+                        <input type="number" id="dieT90" required>
+                    </div>
+                    <div class="form-group">
+                        <label>T. Final Ebull. (°C):</label>
+                        <input type="number" id="dieTFinal" required>
+                    </div>
+                </div>
+                <button type="button" onclick="guardarAnalisis('diesel')" class="cta-button">
+                    Generar Curva y Guardar
+                </button>
+            </form>
+        </div>
+        <div class="curva-container" id="curvaDiesel"></div>
+    </section>
+
+    <!-- Sección Historial -->
+    <section id="historial" class="section">
+        <h2>Historial de Análisis</h2>
+        <div id="listaHistorial" class="historial-container"></div>
+    </section>
+
+    <!-- Sección Contacto -->
+    <section id="contacto" class="section">
+        <h2>Contacto</h2>
+        <p>Ponte en contacto con nosotros para más información.</p>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Mostrar secciones
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Almacenamiento y gestión de datos
+        const analisisStore = {
+            gasolina: [],
+            diesel: [],
+            
+            guardar(tipo, data) {
+                const registro = {
+                    ...data,
+                    id: Date.now(),
+                    fechaAnalisis: new Date().toISOString(),
+                    tipo: tipo
+                };
+                
+                this[tipo].push(registro);
+                localStorage.setItem('analisisData', JSON.stringify(this));
+                this.actualizarHistorial();
+                return registro;
+            },
+            
+            cargar() {
+                const data = JSON.parse(localStorage.getItem('analisisData'));
+                if(data) {
+                    this.gasolina = data.gasolina || [];
+                    this.diesel = data.diesel || [];
+                }
+                this.actualizarHistorial();
+            },
+            
+            actualizarHistorial() {
+                const contenedor = document.getElementById('listaHistorial');
+                contenedor.innerHTML = '';
+                
+                [...this.gasolina, ...this.diesel]
+                    .sort((a, b) => b.id - a.id)
+                    .forEach(analisis => {
+                        const item = document.createElement('div');
+                        item.className = 'historial-item';
+                        item.innerHTML = `
+                            <h3>${analisis.tracktor} - ${new Date(analisis.fecha).toLocaleDateString()}</h3>
+                            <p>Tipo: ${analisis.tipo.toUpperCase()}</p>
+                            <p>Parámetros clave: ${analisis.tipo === 'gasolina' ? 
+                                `Octano: ${analisis.octano}` : 
+                                `Cetano: ${analisis.cetano}`}</p>
+                            <button onclick="mostrarCurva('${analisis.id}')">Ver Curva</button>
+                        `;
+                        contenedor.appendChild(item);
+                    });
+            }
+        };
+
+        // Funcionalidad de gráficos
+        const charts = {};
+
+        function generarCurva(tipo, data) {
+            const containerId = `curva${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`;
+            const ctx = document.createElement('canvas');
+            
+            const contenedor = document.getElementById(containerId);
+            contenedor.innerHTML = '';
+            contenedor.appendChild(ctx);
+
+            const puntos = [
+                data.TInicial,
+                data.T10,
+                data.T50,
+                data.T90,
+                data.TFinal
+            ];
+
+            charts[data.id] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Inicial', 'T10%', 'T50%', 'T90%', 'Final'],
+                    datasets: [{
+                        label: `Curva de Destilación - ${data.tracktor}`,
+                        data: puntos,
+                        borderColor: '#00FFF0',
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        annotation: {
+                            annotations: {
+                                limiteASTM: {
+                                    type: 'line',
+                                    yMin: tipo === 'gasolina' ? 210 : 370,
+                                    yMax: tipo === 'gasolina' ? 210 : 370,
+                                    borderColor: '#FF4A57',
+                                    borderWidth: 2,
+                                    label: {
+                                        content: 'Límite ASTM',
+                                        enabled: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: { 
+                                display: true,
+                                text: 'Temperatura (°C)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function guardarAnalisis(tipo) {
+            const prefix = tipo === 'gasolina' ? 'gas' : 'die';
+            const formData = {};
+            
+            document.querySelectorAll(`#form${tipo.charAt(0).toUpperCase() + tipo.slice(1)} input`).forEach(input => {
+                const key = input.id.replace(prefix, '');
+                formData[key] = input.value;
+            });
+
+            const registro = analisisStore.guardar(tipo, formData);
+            generarCurva(tipo, registro);
+            showSection('historial');
+        }
+
+        function mostrarCurva(id) {
+            const analisis = [...analisisStore.gasolina, ...analisisStore.diesel]
+                           .find(a => a.id == id);
+            
+            if(analisis) {
+                generarCurva(analisis.tipo, analisis);
+                showSection(analisis.tipo);
+            }
+        }
+
+        // Inicialización
+        analisisStore.cargar();
+        showSection('inicio');
+    </script>
+</body>
+</html>
+  <input type="number" min="0" max="100" step="0.1" required><!-- Agregar en el estilo -->
+<style>
+    .acciones-historial {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .btn-imprimir {
+        background: var(--primary-dark);
+        color: white;
+    }
+    
+    .modal-impresion {
+        display: none;
+        padding: 2rem;
+        background: white;
+        max-width: 800px;
+        margin: auto;
+    }
+    
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        
+        .modal-impresion, .modal-impresion * {
+            visibility: visible;
+        }
+        
+        .modal-impresion {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- Modificar el ítem del historial -->
+<script>
+// En la función actualizarHistorial
+item.innerHTML = `
+    <h3>${analisis.tracktor} - ${new Date(analisis.fecha).toLocaleDateString()}</h3>
+    <p>Tipo: ${analisis.tipo.toUpperCase()}</p>
+    <div class="acciones-historial">
+        <button class="cta-button" onclick="mostrarDetalles('${analisis.id}')">Ver</button>
+        <button class="cta-button btn-imprimir" onclick="imprimirAnalisis('${analisis.id}')">Imprimir</button>
+    </div>
+`;
+
+// Nuevas funciones
+function mostrarDetalles(id) {
+    const analisis = [...analisisStore.gasolina, ...analisisStore.diesel]
+                   .find(a => a.id == id);
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-impresion';
+    modal.innerHTML = `
+        <h2>Detalles del Análisis</h2>
+        <div class="detalles-analisis">
+            ${generarTablaDetalles(analisis)}
+        </div>
+        <button class="cta-button" onclick="this.parentElement.remove()">Cerrar</button>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function generarTablaDetalles(analisis) {
+    return `
+        <table>
+            <tr><th>Parámetro</th><th>Valor</th></tr>
+            ${Object.entries(analisis).map(([key, value]) => `
+                <tr>
+                    <td>${key.toUpperCase()}</td>
+                    <td>${typeof value === 'number' ? value.toFixed(2) : value}</td>
+                </tr>
+            `).join('')}
+        </table>
+        <div class="curva-container">
+            <canvas id="curvaImpresion"></canvas>
+        </div>
+    `;
+}
+
+function imprimirAnalisis(id) {
+    const analisis = [...analisisStore.gasolina, ...analisisStore.diesel]
+                   .find(a => a.id == id);
+    
+    const ventanaImpresion = window.open('', '_blank');
+    ventanaImpresion.document.write(`
+        <html>
+            <head>
+                <title>Reporte de Análisis - ${analisis.tracktor}</title>
+                <style>
+                    body { font-family: Arial; padding: 2rem; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    canvas { max-width: 800px; margin: 2rem auto; }
+                </style>
+            </head>
+            <body>
+                <h1>Reporte de Análisis</h1>
+                ${generarTablaDetalles(analisis)}
+                <script src="https://cdn.jsdelivr.net/npm/chart.js">\<\/script>
+                <script>
+                    window.onload = function() {
+                        generarCurvaImpresion(${JSON.stringify(analisis)});
+                    }
+                    
+                    function generarCurvaImpresion(data) {
+                        new Chart(document.getElementById('curvaImpresion'), {
+                            // Configuración igual a la curva normal
+                        });
+                    }
+                \<\/script>
+            </body>
+        </html>
+    `);
+    ventanaImpresion.document.close();
+}
+</script>
+  <!-- Añadir en el CSS -->
+<style>
+    /* Estilos para los botones de acción */
+    .acciones-historial {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .btn-accion {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-ver {
+        background: var(--primary-cyan);
+        color: var(--primary-dark);
+        border: 2px solid var(--primary-cyan);
+    }
+
+    .btn-descargar {
+        background: var(--accent-red);
+        color: white;
+        border: 2px solid var(--accent-red);
+    }
+
+    .btn-imprimir {
+        background: var(--primary-dark);
+        color: white;
+        border: 2px solid var(--primary-dark);
+    }
+
+    /* Modal de detalles */
+    .modal-detalles {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        z-index: 10000;
+        max-width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+</style>
+
+<!-- Modificar el ítem del historial -->
+<script>
+// En la función actualizarHistorial
+item.innerHTML = `
+    <div class="historial-item">
+        <h3>${analisis.tracktor} - ${new Date(analisis.fecha).toLocaleDateString()}</h3>
+        <p>Tipo: ${analisis.tipo.toUpperCase()} | ${analisis.tipo === 'gasolina' ? 
+            `Octano: ${analisis.octano}` : 
+            `Cetano: ${analisis.cetano}`}</p>
+        
+        <div class="acciones-historial">
+            <button class="btn-accion btn-ver" onclick="mostrarDetallesCompletos('${analisis.id}')">
+                👁️ Ver Completo
+            </button>
+            <button class="btn-accion btn-descargar" onclick="exportarAnalisis('${analisis.id}')">
+                ⬇️ Guardar PDF
+            </button>
+            <button class="btn-accion btn-imprimir" onclick="imprimirAnalisisProfesional('${analisis.id}')">
+                🖨️ Imprimir
+            </button>
+        </div>
+    </div>
+`;
+
+// Nuevas funciones mejoradas
+function mostrarDetallesCompletos(id) {
+    const analisis = obtenerAnalisisPorId(id);
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-detalles';
+    modal.innerHTML = `
+        <div class="encabezado-modal">
+            <h2>Análisis Completo - ${analisis.tracktor}</h2>
+            <button onclick="this.parentElement.parentElement.remove()" class="cta-button">✖️</button>
+        </div>
+        
+        <div class="contenido-modal">
+            ${generarTablaDetallada(analisis)}
+            <div class="grafico-modal" id="graficoModal-${id}"></div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    generarGraficoModal(id, analisis);
+}
+
+function generarTablaDetallada(analisis) {
+    return `
+        <table class="tabla-detalles">
+            <thead>
+                <tr>
+                    <th>Parámetro</th>
+                    <th>Valor</th>
+                    <th>Unidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${Object.entries(analisis).map(([key, value]) => {
+                    const unidad = obtenerUnidad(key);
+                    return `
+                        <tr>
+                            <td>${formatearNombreParametro(key)}</td>
+                            <td>${formatearValor(value, key)}</td>
+                            <td>${unidad}</td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+function obtenerUnidad(parametro) {
+    const unidades = {
+        'octano': 'RON',
+        'cetano': 'CI',
+        'TInicial': '°C',
+        'T10': '°C',
+        'T50': '°C',
+        'T90': '°C',
+        'TFinal': '°C',
+        'densidad': 'kg/m³',
+        'benceno': '%',
+        'tolueno': '%',
+        'etanol': '%',
+        'metanol': '%',
+        'olefinas': '%',
+        'aromaticos': '%',
+        'saturados': '%'
+    };
+    return unidades[parametro] || '-';
+}
+
+function formatearNombreParametro(parametro) {
+    const nombres = {
+        'TInicial': 'Temp. Inicial',
+        'T10': 'Temp. 10%',
+        'T50': 'Temp. 50%',
+        'T90': 'Temp. 90%',
+        'TFinal': 'Temp. Final'
+    };
+    return nombres[parametro] || parametro.charAt(0).toUpperCase() + parametro.slice(1);
+}
+
+function formatearValor(valor, parametro) {
+    return typeof valor === 'number' ? 
+        parametro.startsWith('T') ? valor.toFixed(0) : valor.toFixed(2) :
+        valor;
+}
+
+async function exportarAnalisis(id) {
+    const analisis = obtenerAnalisisPorId(id);
+    
+    // Generar PDF con jsPDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Cabecera
+    doc.setFontSize(18);
+    doc.text(`Informe de Análisis - ${analisis.tracktor}`, 15, 20);
+    
+    // Tabla de datos
+    const datos = Object.entries(analisis).map(([key, value]) => [
+        formatearNombreParametro(key),
+        formatearValor(value, key),
+        obtenerUnidad(key)
+    ]);
+    
+    doc.autoTable({
+        head: [['Parámetro', 'Valor', 'Unidad']],
+        body: datos,
+        startY: 30,
+        theme: 'grid',
+        styles: { fontSize: 10 }
+    });
+    
+    // Gráfico
+    const canvas = await generarImagenGrafico(id);
+    const imgData = canvas.toDataURL('image/png');
+    doc.addImage(imgData, 'PNG', 15, doc.autoTable.previous.finalY + 10, 180, 100);
+    
+    doc.save(`analisis-${analisis.tracktor}.pdf`);
+}
+
+async function imprimirAnalisisProfesional(id) {
+    const analisis = obtenerAnalisisPorId(id);
+    const ventana = window.open('', '_blank');
+    
+    ventana.document.write(`
+        <html>
+            <head>
+                <title>Informe de Análisis - ${analisis.tracktor}</title>
+                <style>
+                    body { font-family: Arial; padding: 2rem; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    .grafico-impresion { width: 100%; height: 400px; margin-top: 2rem; }
+                </style>
+            </head>
+            <body>
+                <h1>Informe de Análisis</h1>
+                ${generarTablaDetallada(analisis)}
+                <div class="grafico-impresion">
+                    <canvas id="graficoImpresion"></canvas>
+                </div>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js">
+                <script>
+                    window.onload = function() {
+                        new Chart(document.getElementById('graficoImpresion'), ${JSON.stringify(
+                            obtenerConfiguracionGrafico(analisis)
+                        )});
+                    }
+                <\/script>
+            </body>
+        </html>
+    `);
+    ventana.document.close();
+}
+
+// Funciones auxiliares
+function obtenerAnalisisPorId(id) {
+    return [...analisisStore.gasolina, ...analisisStore.diesel]
+           .find(a => a.id == id);
+}
+
+async function generarImagenGrafico(id) {
+    const analisis = obtenerAnalisisPorId(id);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    new Chart(ctx, obtenerConfiguracionGrafico(analisis));
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return canvas;
+}
+
+function obtenerConfiguracionGrafico(analisis) {
+    return {
+        type: 'line',
+        data: {
+            labels: ['Inicial', '10%', '50%', '90%', 'Final'],
+            datasets: [{
+                label: `Curva de Destilación - ${analisis.tracktor}`,
+                data: [
+                    analisis.TInicial,
+                    analisis.T10,
+                    analisis.T50,
+                    analisis.T90,
+                    analisis.TFinal
+                ],
+                borderColor: '#00FFF0',
+                borderWidth: 2,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    };
+}
+</script>
+
+<!-- Añadir en las dependencias -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Agrega esta sección después del formulario de registro -->
+<section id="historial" class="section">
+    <h2>Historial de Análisis</h2>
+    <div id="listaHistorial" class="historial-container"></div>
+</section>
+
+<style>
+/* Agrega estos estilos */
+.historial-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.historial-item {
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.historial-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.historial-item h3 {
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+}
+
+.historial-item p {
+    margin: 5px 0;
+}
+
+.acciones-historial {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-ver {
+    background: var(--primary-cyan);
+    color: var(--primary-dark);
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+}
+</style>
+
+<script>
+// Modifica la función guardarAnalisis
+function guardarAnalisis(tipo) {
+    if (!validarFormulario(tipo)) return;
+
+    const registro = {
+        id: Date.now(),
+        tipo: tipo,
+        fecha: new Date().toLocaleString(),
+        datos: obtenerDatosFormulario(tipo)
+    };
+
+    // Guardar en localStorage
+    let historial = JSON.parse(localStorage.getItem('historialAnalisis') || '[]');
+    historial.unshift(registro);
+    localStorage.setItem('historialAnalisis', JSON.stringify(historial));
+
+    // Actualizar vista
+    mostrarHistorial();
+    mostrarConfirmacion('Análisis guardado exitosamente');
+}
+
+// Nueva función para mostrar el historial
+function mostrarHistorial() {
+    const contenedor = document.getElementById('listaHistorial');
+    const historial = JSON.parse(localStorage.getItem('historialAnalisis') || '[]');
+    
+    contenedor.innerHTML = historial.map(item => `
+        <div class="historial-item">
+            <h3>Muestra: ${item.datos.tracktor}</h3>
+            <p>Tipo: ${item.tipo.toUpperCase()}</p>
+            <p>Fecha: ${item.fecha}</p>
+            <div class="acciones-historial">
+                <button class="btn-ver" onclick="mostrarDetallesAnalisis(${item.id})">
+                    Ver Detalles
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+/

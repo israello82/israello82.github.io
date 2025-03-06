@@ -1,0 +1,143 @@
+<script>
+// Función mejorada para generar curvas de destilación
+function generarCurva(tipo, data) {
+    const containerId = `curva${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`;
+    const contenedor = document.getElementById(containerId);
+    contenedor.innerHTML = ''; // Limpiar contenedor
+    
+    const canvas = document.createElement('canvas');
+    contenedor.appendChild(canvas);
+
+    // Configuración de la curva
+    const puntosDestilacion = {
+        labels: ['Inicial', 'T10%', 'T50%', 'T90%', 'Final'],
+        datasets: [{
+            label: `Curva de Destilación - ${data.tracktor}`,
+            data: [
+                parseFloat(data.TInicial),
+                parseFloat(data.T10),
+                parseFloat(data.T50),
+                parseFloat(data.T90),
+                parseFloat(data.TFinal)
+            ],
+            borderColor: '#00FFF0',
+            borderWidth: 3,
+            tension: 0.4,
+            fill: false
+        }]
+    };
+
+    // Límites ASTM configurables
+    const limitesASTM = {
+        gasolina: 210,  // Temperatura límite para gasolina
+        diesel: 370     // Temperatura límite para diesel
+    };
+
+    new Chart(canvas, {
+        type: 'line',
+        data: puntosDestilacion,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                annotation: {
+                    annotations: {
+                        limiteASTM: {
+                            type: 'line',
+                            yMin: limitesASTM[tipo],
+                            yMax: limitesASTM[tipo],
+                            borderColor: '#FF4A57',
+                            borderWidth: 2,
+                            label: {
+                                content: 'Límite ASTM',
+                                enabled: true,
+                                position: 'end'
+                            }
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Temperatura (°C)'
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: tipo === 'gasolina' ? 250 : 400
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Porcentaje de Destilación'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Función para guardar y generar curva (modificada)
+function guardarAnalisis(tipo) {
+    const prefix = tipo === 'gasolina' ? 'gas' : 'die';
+    const formData = {};
+    
+    // Capturar todos los datos del formulario
+    document.querySelectorAll(`#form${tipo.charAt(0).toUpperCase() + tipo.slice(1)} input`).forEach(input => {
+        const key = input.id.replace(prefix, '');
+        formData[key] = input.value;
+    });
+
+    // Generar curva inmediatamente
+    generarCurva(tipo, formData);
+    
+    // Guardar en historial (opcional)
+    // analisisStore.guardar(tipo, formData);
+    
+    // Mostrar sección de curva
+    document.getElementById(`curva${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+</script>function validarFormulario(tipo) {
+    const prefix = tipo === 'gasolina' ? 'gas' : 'die';
+    let valido = true;
+
+    document.querySelectorAll(`#form${tipo.charAt(0).toUpperCase() + tipo.slice(1)} input`).forEach(input => {
+        if (!input.value) {
+            input.classList.add('error'); // Agrega una clase de error para resaltar el campo
+            valido = false;
+        } else {
+            input.classList.remove('error'); // Remueve la clase de error si el campo está lleno
+        }
+    });
+
+    if (!valido) {
+        alert('Por favor, complete todos los campos.');
+    }
+    return valido;
+}
+
+function guardarAnalisis(tipo) {
+    if (validarFormulario(tipo)) {
+        // Lógica para guardar el análisis
+    }
+}
+.error {
+    border-color: #FF4A57 !important;
+    background-color: #FFF5F5;
+}
+
+.error-message {
+    color: #FF4A57;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
